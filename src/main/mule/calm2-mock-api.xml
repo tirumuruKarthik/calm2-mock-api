@@ -33,7 +33,7 @@ output application/json
 						<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
 output application/java
 ---
-404]]></ee:set-variable>
+403]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
 			</when>
@@ -71,7 +71,7 @@ output application/json
 						<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
 output application/java
 ---
-404]]></ee:set-variable>
+409]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
 			</when>
