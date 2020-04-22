@@ -18,8 +18,27 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	</flow>
 	<sub-flow name="calm2-mock-api-sub-Flow" doc:id="948523ef-00fd-4356-8d6d-52d4a63cce90" >
 		<choice doc:name="Choice" doc:id="68af11b3-9362-4e07-8ebd-71acfe9dbf62" >
-			<when expression="#[attributes.headers['X-ErpAccountNumber'] == null or attributes.headers['X-CustCode'] == null]">
-				<ee:transform doc:name="API Response" doc:id="204706be-83c8-4210-9165-77713c371ef7" >
+			<when expression="#[attributes.headers['Authorization'] == null]">
+				<ee:transform doc:name="403 Response" doc:id="e4b71e7d-bfd8-49d3-8e4b-912136858a0a" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	responseCode: 403,
+	responseStatus: "Permission Error"
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+404]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</when>
+			<when expression="#[payload.orderline.order == null or payload.customer == null]">
+				<ee:transform doc:name="404 Response" doc:id="204706be-83c8-4210-9165-77713c371ef7" >
 					<ee:message >
 						<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
@@ -37,20 +56,8 @@ output application/java
 					</ee:variables>
 				</ee:transform>
 			</when>
-			<otherwise >
-				<ee:transform doc:name="Transform Message" doc:id="7a52660d-8b2a-40d5-8311-87f8e3025756">
-					<ee:message>
-					</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="custCode" ><![CDATA[%dw 2.0
-output application/java
----
-(attributes.headers['X-CustCode'])[0 to 0]]]></ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-				<choice doc:name="Choice" doc:id="af260be1-c7ec-480a-b4d7-784d93eb6fd0" >
-					<when expression='#[vars.custCode == "C"]'>
-						<ee:transform doc:name="API Response" doc:id="a45b4cec-0588-470d-9b25-dbbd71bcda6e" >
+			<when expression="#[payload.orderline.erpOrderLineId == payload.orderline.order.erpOrderId]">
+				<ee:transform doc:name="409 Response" doc:id="f2015848-bb80-418c-865e-7cd669d9ff4f" >
 					<ee:message >
 						<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
@@ -64,33 +71,14 @@ output application/json
 						<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
 output application/java
 ---
-409]]></ee:set-variable>
+404]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
-					</when>
-					<when expression='#[vars.custCode == "P"]'>
-						<ee:transform doc:name="API Response" doc:id="b77ea94e-cf39-4b2b-b743-e08c6a34c11e" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{
-	responseCode: 403,
-	responseStatus: "Permission error"
-}]]></ee:set-payload>
-					</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
-output application/java
----
-403]]></ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-					</when>
-					<otherwise >
-						<ee:transform doc:name="API Response" doc:id="62342a0c-d362-4f77-8aa4-d42fa596deff" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
+			</when>
+			<otherwise >
+				<ee:transform doc:name="200 Response" doc:id="62342a0c-d362-4f77-8aa4-d42fa596deff">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
@@ -98,15 +86,13 @@ output application/json
 	responseStatus: "Success, updated"
 }]]></ee:set-payload>
 					</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+					<ee:variables>
+						<ee:set-variable variableName="httpStatus"><![CDATA[%dw 2.0
 output application/java
 ---
 200]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
-					</otherwise>
-				</choice>
 			</otherwise>
 		</choice>
 	</sub-flow>
