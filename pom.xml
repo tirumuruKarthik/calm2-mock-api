@@ -14,7 +14,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<app.runtime>4.2.2</app.runtime>
-		<mule.maven.plugin.version>3.3.5</mule.maven.plugin.version>
+		<mule.maven.plugin.version>3.2.7</mule.maven.plugin.version>
 	</properties>
 
 	<build>
@@ -26,7 +26,14 @@
 				<extensions>true</extensions>
 				<configuration>
 				<classifier>mule-application</classifier>
-                </configuration>
+				<runtimeVersion>4.2.2-hf1</runtimeVersion>
+                    <coverage>
+                        <runCoverage>true</runCoverage>
+                        <formats>
+                            <format>html</format>
+                        </formats>
+                    </coverage>
+                </configuration>                
 			</plugin>
 		</plugins>
 	</build>
