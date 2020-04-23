@@ -18,7 +18,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	</flow>
 	<sub-flow name="calm2-mock-api-sub-Flow" doc:id="948523ef-00fd-4356-8d6d-52d4a63cce90" >
 		<choice doc:name="Choice" doc:id="68af11b3-9362-4e07-8ebd-71acfe9dbf62" >
-			<when expression="#[attributes.headers['Authorization'] != null and attributes.headers['Authorization'] != 1234]">
+			<when expression="#[attributes.headers['Authorization'] != null and attributes.headers['Authorization'] != '1234']">
 				<ee:transform doc:name="403 Response" doc:id="e4b71e7d-bfd8-49d3-8e4b-912136858a0a" >
 					<ee:message >
 						<ee:set-payload ><![CDATA[%dw 2.0
