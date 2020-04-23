@@ -26,7 +26,7 @@ output application/json
 ---
 {
 	responseCode: 403,
-	responseStatus: "Permission Error"
+	responseText: "Permission Error"
 }]]></ee:set-payload>
 					</ee:message>
 					<ee:variables >
@@ -45,7 +45,7 @@ output application/json
 ---
 {
 	responseCode: 404,
-	responseStatus: "Customer or order not found"
+	responseText: "Customer or order not found"
 }]]></ee:set-payload>
 					</ee:message>
 					<ee:variables >
@@ -64,7 +64,7 @@ output application/json
 ---
 {
 	responseCode: 409,
-	responseStatus: "Conflict: order cannot be updated because some licenses have already been used"
+	responseText: "Conflict: order cannot be updated because some licenses have already been used"
 }]]></ee:set-payload>
 					</ee:message>
 					<ee:variables >
@@ -83,7 +83,7 @@ output application/json
 ---
 {
 	responseCode: 200,
-	responseStatus: "Success, updated"
+	responseText: "Success, updated"
 }]]></ee:set-payload>
 					</ee:message>
 					<ee:variables>
