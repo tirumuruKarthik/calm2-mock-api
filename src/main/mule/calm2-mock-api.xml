@@ -29,7 +29,7 @@ vars.apiName ++ ": " ++ 'calm2-mock-api-flow']]></ee:set-variable>
 	</flow>
 	<sub-flow name="calm2-mock-api-sub-Flow" doc:id="948523ef-00fd-4356-8d6d-52d4a63cce90" >
 		<choice doc:name="Choice" doc:id="68af11b3-9362-4e07-8ebd-71acfe9dbf62" >
-			<when expression="#[attributes.headers['Authorization'] != '1234']">
+			<when expression="#[attributes.headers['Authorization'] != 'Bearer 1234']">
 				<ee:transform doc:name="403 Response" doc:id="e4b71e7d-bfd8-49d3-8e4b-912136858a0a" >
 					<ee:message >
 						<ee:set-payload ><![CDATA[%dw 2.0
@@ -48,7 +48,7 @@ output application/java
 					</ee:variables>
 				</ee:transform>
 			</when>
-			<when expression='#[payload.custName == null or payload.custName == "" or payload.erpOrderId == null or payload.erpOrderId == ""]'>
+			<when expression='#[payload.erpOrderId == "0" or payload.erpOrderId == 0]'>
 				<ee:transform doc:name="404 Response" doc:id="204706be-83c8-4210-9165-77713c371ef7" >
 					<ee:message >
 						<ee:set-payload ><![CDATA[%dw 2.0
@@ -87,7 +87,39 @@ output application/java
 				</ee:transform>
 			</when>
 			<otherwise >
-				<ee:transform doc:name="200 Response" doc:id="62342a0c-d362-4f77-8aa4-d42fa596deff">
+				<ee:transform doc:name="Transform Message" doc:id="9de4cc73-fcea-4b1b-9084-a9c389d28a87">
+					<ee:message>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="orderIdLength" ><![CDATA[%dw 2.0
+output application/java
+---
+sizeOf(payload.erpOrderId)
+]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+				<choice doc:name="Choice" doc:id="12a69ba2-f79f-4de5-8e70-48d7700bd86b" >
+					<when expression="#[vars.orderIdLength &lt; 2]">
+						<ee:transform doc:name="201 Response" doc:id="4335a11b-423d-4f88-967f-e1be3ae364c5" >
+							<ee:message >
+								<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	responseCode: 201,
+	responseText: "Success, created"
+}]]></ee:set-payload>
+							</ee:message>
+							<ee:variables >
+								<ee:set-variable variableName="httpStatus" ><![CDATA[%dw 2.0
+output application/java
+---
+201]]></ee:set-variable>
+							</ee:variables>
+						</ee:transform>
+					</when>
+					<otherwise >
+						<ee:transform doc:name="200 Response" doc:id="62342a0c-d362-4f77-8aa4-d42fa596deff">
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -104,6 +136,8 @@ output application/java
 200]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
+					</otherwise>
+				</choice>
 			</otherwise>
 		</choice>
 	</sub-flow>
